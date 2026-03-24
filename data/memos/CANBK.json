@@ -1,0 +1,145 @@
+{
+  "ticker": "CANBK",
+  "name": "Canara Bank",
+  "exchange": "NSE",
+  "sector": "PSU Banks",
+  "status": "active",
+  "updatedAt": "Mar 22, 2026",
+  "analystTarget": 125,
+  "entryPrice": 82,
+  "entryDate": "Feb 10",
+  "earningsDate": "Apr 28",
+
+  "thesis": "Canara Bank represents one of the most compelling turnaround stories in the Indian PSU banking space. After years of asset quality challenges, the bank has executed a disciplined NPA reduction strategy, bringing gross NPAs from ~12% (FY18) to under 4% — a structural shift, not a cyclical blip.\n\nThe investment thesis rests on three pillars: (1) continued NIM expansion as the loan mix shifts toward retail and MSME, (2) subsidiary monetization optionality via Canara HSBC Life and Canara Robeco AMC, and (3) a valuation re-rating as FII holders increasingly recognize the improved risk profile.\n\nAt 6.2x trailing earnings with an 18%+ ROE, the risk-reward skews heavily favorable. The bank's cost-to-income ratio has steadily declined from 52% to 46%, reflecting operational efficiency gains that should compound as digital adoption accelerates across the branch network.",
+
+  "tailwinds": [
+    "India credit-to-GDP at 55% with decades of structural growth runway",
+    "PSU bank NPA cycle at trough — asset quality at multi-year best",
+    "Subsidiary monetization (insurance + AMC) creates hidden value",
+    "Digital lending adoption reducing cost-to-income ratio",
+    "Government recapitalization cycle largely complete"
+  ],
+
+  "headwinds": [
+    "RBI rate easing cycle could compress NIMs by 10-20bps",
+    "Government ownership at ~62% limits M&A flexibility",
+    "Global slowdown risk impacting export credit segments",
+    "Fintech competition in retail lending accelerating",
+    "Potential QIP dilution to meet capital adequacy norms"
+  ],
+
+  "whyWinner": "Among the 12 listed PSU banks, Canara Bank stands out on three dimensions that most peers lack simultaneously. First, it delivers the highest ROE in the PSU banking cohort at 18.4%, ahead of Indian Bank (17.1%) and Bank of Baroda (16.8%). Second, it carries significant subsidiary optionality that no other PSU bank possesses at this scale — Canara HSBC Life Insurance and Canara Robeco AMC together represent Rs.15-20/share of unlocked value. Third, its GNPA trajectory has improved faster than the peer median, declining from 12%+ to 3.7% in just six years while peers like PNB (5.2%) and Union Bank (4.8%) still lag. The combination of best-in-class profitability, hidden subsidiary value, and accelerating asset quality improvement creates a compounding thesis that is difficult to replicate across the PSU banking universe.",
+
+  "catalysts": [
+    "Canara HSBC Life IPO / stake sale",
+    "GNPA improvement below 3.5%",
+    "FII ownership crossing 15%",
+    "Credit growth re-acceleration H2FY27"
+  ],
+
+  "risks": [
+    "NIM compression in easing cycle",
+    "Govt ownership limits governance",
+    "FII selling on PSU basket",
+    "Potential QIP dilution"
+  ],
+
+  "priceHistory": [
+    { "week": "Apr 25", "price": 74.2 },
+    { "week": "May", "price": 78.5 },
+    { "week": "Jun", "price": 82.1 },
+    { "week": "Jul", "price": 88.4 },
+    { "week": "Aug", "price": 92.3 },
+    { "week": "Sep", "price": 105.8 },
+    { "week": "Oct", "price": 118.6 },
+    { "week": "Nov", "price": 128.9 },
+    { "week": "Dec", "price": 122.4 },
+    { "week": "Jan 26", "price": 110.2 },
+    { "week": "Feb", "price": 96.5 },
+    { "week": "Mar", "price": 98.45 }
+  ],
+
+  "assetQuality": [
+    { "year": "FY20", "gnpa": 8.2, "nnpa": 4.8 },
+    { "year": "FY21", "gnpa": 7.6, "nnpa": 3.8 },
+    { "year": "FY22", "gnpa": 5.4, "nnpa": 2.6 },
+    { "year": "FY23", "gnpa": 4.1, "nnpa": 1.7 },
+    { "year": "FY24", "gnpa": 3.7, "nnpa": 1.2 },
+    { "year": "FY25E", "gnpa": 3.2, "nnpa": 0.9 }
+  ],
+
+  "horizons": {
+    "short": {
+      "label": "Short Term (1Y)",
+      "soWhat": "At 6.2x trailing P/E with improving asset quality, the near-term risk-reward is favourable even with modest NIM compression. Entry point for patient capital.",
+      "financials": [
+        { "year": "FY23", "revenue": 96800, "pat": 10604, "actual": true },
+        { "year": "FY24", "revenue": 108200, "pat": 14554, "actual": true },
+        { "year": "FY25E", "revenue": 118500, "pat": 16200, "actual": false },
+        { "year": "FY26E", "revenue": 131000, "pat": 18800, "actual": false }
+      ],
+      "assumptions": {
+        "wacc": "12.5%",
+        "terminalGrowth": "5%",
+        "loanGrowth": "12-14%",
+        "nim": "2.95-3.05%",
+        "creditCost": "0.8%",
+        "crar": "15.5%",
+        "notes": "Near-term NIM compression likely as RBI eases. Loan growth driven by retail and MSME. Credit costs normalised."
+      },
+      "score": { "valuation": 85, "growth": 65, "quality": 70, "momentum": 72, "safety": 62, "dividends": 68 },
+      "scoreRationale": "Short-term score reflects near-term NIM pressure partially offset by strong asset quality improvement and reasonable valuations."
+    },
+    "medium": {
+      "label": "Medium Term (2-3Y)",
+      "soWhat": "Strong conviction. Subsidiary monetization alone could unlock Rs.15-20/share. With ROE trending toward 20% and NPA cycle bottoming, valuation re-rating to 1.2-1.5x book is probable.",
+      "financials": [
+        { "year": "FY24", "revenue": 108200, "pat": 14554, "actual": true },
+        { "year": "FY25E", "revenue": 118500, "pat": 16200, "actual": false },
+        { "year": "FY26E", "revenue": 131000, "pat": 18800, "actual": false },
+        { "year": "FY27E", "revenue": 148000, "pat": 22500, "actual": false },
+        { "year": "FY28E", "revenue": 166000, "pat": 26000, "actual": false }
+      ],
+      "assumptions": {
+        "wacc": "11.8%",
+        "terminalGrowth": "5.5%",
+        "loanGrowth": "14-16%",
+        "nim": "3.05-3.20%",
+        "creditCost": "0.6%",
+        "crar": "16.0%",
+        "notes": "Medium-term thesis hinges on subsidiary monetization (Canara HSBC Life, Robeco AMC) and steady ROE expansion toward 20%+. FII rerating expected."
+      },
+      "score": { "valuation": 88, "growth": 78, "quality": 74, "momentum": 80, "safety": 68, "dividends": 72 },
+      "scoreRationale": "Medium-term outlook improves as subsidiary monetization adds 15-20/share optionality and ROE trajectory steepens above 18%."
+    },
+    "long": {
+      "label": "Long Term (5Y+)",
+      "soWhat": "Highest conviction at long horizon. India's credit-to-GDP at ~55% vs 150%+ in developed markets means decades of structural growth. PSU bank consolidation could make Canara a top-3 player. Target 2-3x from current levels over 5 years.",
+      "financials": [
+        { "year": "FY25E", "revenue": 118500, "pat": 16200, "actual": false },
+        { "year": "FY26E", "revenue": 131000, "pat": 18800, "actual": false },
+        { "year": "FY27E", "revenue": 148000, "pat": 22500, "actual": false },
+        { "year": "FY28E", "revenue": 166000, "pat": 26000, "actual": false },
+        { "year": "FY29E", "revenue": 188000, "pat": 31000, "actual": false },
+        { "year": "FY30E", "revenue": 212000, "pat": 36500, "actual": false }
+      ],
+      "assumptions": {
+        "wacc": "11.0%",
+        "terminalGrowth": "6%",
+        "loanGrowth": "15-18%",
+        "nim": "3.15-3.30%",
+        "creditCost": "0.5%",
+        "crar": "17.0%",
+        "notes": "Long-term structural play on India's credit penetration. PSU bank consolidation optionality. Digital lending push reduces opex ratio. Government stake dilution to <51% is the key catalyst."
+      },
+      "score": { "valuation": 92, "growth": 85, "quality": 80, "momentum": 75, "safety": 72, "dividends": 78 },
+      "scoreRationale": "Long-term score is highest across horizons as India credit penetration thesis plays out and ROE sustains above 18%, justifying valuation re-rating."
+    }
+  },
+
+  "changelog": [
+    { "date": "Mar 22", "note": "Updated price targets post Q3 results" },
+    { "date": "Feb 28", "note": "Added subsidiary monetization analysis" },
+    { "date": "Feb 10", "note": "Initial memo published" }
+  ]
+}

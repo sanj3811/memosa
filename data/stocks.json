@@ -1,0 +1,14 @@
+[
+  { "ticker": "CANBK", "name": "Canara Bank", "sector": "PSU Banks", "status": "active", "pe": 6.2, "pb": 1.1, "roe": 18.4, "roce": 1.2, "mcap": 88420, "entryPrice": 82, "entryDate": "Feb 10", "earningsDate": "Apr 28" },
+  { "ticker": "WABAG", "name": "VA Tech Wabag", "sector": "Water", "status": "active", "pe": 38.5, "pb": 5.8, "roe": 14.2, "roce": 22.5, "mcap": 10200, "entryPrice": 1380, "entryDate": "Jan 15", "earningsDate": "May 12" },
+  { "ticker": "BANKBARODA", "name": "Bank of Baroda", "sector": "PSU Banks", "status": "active", "pe": 6.9, "pb": 1.2, "roe": 16.8, "roce": 1.1, "mcap": 126800, "entryPrice": 220, "entryDate": "Dec 5", "earningsDate": "Apr 25" },
+  { "ticker": "MAHABANK", "name": "Bank of Maharashtra", "sector": "PSU Banks", "status": "active", "pe": 7.8, "pb": 1.6, "roe": 20.1, "roce": 1.4, "mcap": 38200, "entryPrice": 48, "entryDate": "Feb 20", "earningsDate": "Apr 30" },
+  { "ticker": "BDL", "name": "Bharat Dynamics", "sector": "Defence", "status": "monitor", "pe": 42.0, "pb": 8.2, "roe": 12.5, "roce": 18.5, "mcap": 24000, "entryPrice": 1420, "entryDate": "Mar 1", "earningsDate": "May 8" },
+  { "ticker": "UNIONBANK", "name": "Union Bank", "sector": "PSU Banks", "status": "monitor", "pe": 5.8, "pb": 0.9, "roe": 15.2, "roce": 1.0, "mcap": 80500, "entryPrice": 105, "entryDate": "Jan 28", "earningsDate": "May 2" },
+  { "ticker": "HAL", "name": "HAL", "sector": "Defence", "status": "active", "pe": 35.0, "pb": 9.5, "roe": 25.8, "roce": 32.0, "mcap": 275000, "entryPrice": 3800, "entryDate": "Nov 12", "earningsDate": "May 15" },
+  { "ticker": "IOB", "name": "Indian Overseas Bank", "sector": "PSU Banks", "status": "review", "pe": 28.5, "pb": 2.8, "roe": 8.2, "roce": 0.7, "mcap": 98200, "entryPrice": 58, "entryDate": "Jan 10", "earningsDate": "May 5" },
+  { "ticker": "ISGEC", "name": "Isgec Heavy", "sector": "Water", "status": "monitor", "pe": 22.1, "pb": 2.4, "roe": 11.8, "roce": 14.8, "mcap": 4250, "entryPrice": 1100, "entryDate": "Feb 5", "earningsDate": "May 18" },
+  { "ticker": "CLEAN", "name": "Clean Science", "sector": "Chem", "status": "review", "pe": 55.0, "pb": 11.5, "roe": 22.0, "roce": 28.5, "mcap": 13000, "entryPrice": 1450, "entryDate": "Dec 18", "earningsDate": "Apr 22" },
+  { "ticker": "PSB", "name": "Punjab & Sind", "sector": "PSU Banks", "status": "monitor", "pe": 11.4, "pb": 1.3, "roe": 10.5, "roce": 0.8, "mcap": 26100, "entryPrice": 40, "entryDate": "Mar 5", "earningsDate": "May 10" },
+  { "ticker": "PENIND", "name": "Pennar Industries", "sector": "Water", "status": "monitor", "pe": 15.6, "pb": 1.9, "roe": 13.0, "roce": 16.2, "mcap": 2840, "entryPrice": 190, "entryDate": "Feb 25", "earningsDate": "May 20" }
+]

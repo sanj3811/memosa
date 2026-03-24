@@ -1,0 +1,40 @@
+{
+  "PSU Banks": {
+    "relevantMetric": "GNPA %",
+    "relevantMetricKey": "gnpa",
+    "peers": [
+      { "name": "Bank of Baroda", "mcap": "1,26,800", "pe": 6.9, "pb": 1.2, "roe": 16.8, "roce": 1.1, "gnpa": 3.1 },
+      { "name": "Union Bank", "mcap": "80,500", "pe": 5.8, "pb": 0.9, "roe": 15.2, "roce": 1.0, "gnpa": 4.8 },
+      { "name": "Indian Bank", "mcap": "62,400", "pe": 6.5, "pb": 1.1, "roe": 17.1, "roce": 1.2, "gnpa": 3.5 },
+      { "name": "Punjab National Bank", "mcap": "1,15,600", "pe": 8.2, "pb": 1.0, "roe": 12.8, "roce": 0.9, "gnpa": 5.2 },
+      { "name": "Bank of India", "mcap": "52,800", "pe": 7.4, "pb": 0.8, "roe": 13.5, "roce": 0.8, "gnpa": 4.1 }
+    ]
+  },
+  "Water": {
+    "relevantMetric": "Order Book (Cr)",
+    "relevantMetricKey": "orderBook",
+    "peers": [
+      { "name": "Triveni Eng.", "mcap": "8,200", "pe": 28.5, "pb": 4.2, "roe": 16.5, "roce": 19.8, "orderBook": 4500 },
+      { "name": "Ion Exchange", "mcap": "5,600", "pe": 32.0, "pb": 5.1, "roe": 14.8, "roce": 17.2, "orderBook": 2800 },
+      { "name": "Praj Industries", "mcap": "12,400", "pe": 35.5, "pb": 7.8, "roe": 18.2, "roce": 21.5, "orderBook": 3200 }
+    ]
+  },
+  "Defence": {
+    "relevantMetric": "Order Book (Cr)",
+    "relevantMetricKey": "orderBook",
+    "peers": [
+      { "name": "BEL", "mcap": "1,85,000", "pe": 38.0, "pb": 8.5, "roe": 24.2, "roce": 28.0, "orderBook": 76000 },
+      { "name": "BEML", "mcap": "15,200", "pe": 45.0, "pb": 3.8, "roe": 9.5, "roce": 12.5, "orderBook": 12500 },
+      { "name": "Mazagon Dock", "mcap": "68,000", "pe": 32.0, "pb": 12.0, "roe": 28.5, "roce": 35.0, "orderBook": 38000 }
+    ]
+  },
+  "Chem": {
+    "relevantMetric": "EBITDA Margin %",
+    "relevantMetricKey": "ebitdaMargin",
+    "peers": [
+      { "name": "SRF Ltd", "mcap": "72,000", "pe": 48.0, "pb": 7.2, "roe": 15.8, "roce": 14.5, "ebitdaMargin": 22.5 },
+      { "name": "Navin Fluorine", "mcap": "18,500", "pe": 52.0, "pb": 6.8, "roe": 12.2, "roce": 13.8, "ebitdaMargin": 24.0 },
+      { "name": "Vinati Organics", "mcap": "22,000", "pe": 58.0, "pb": 9.5, "roe": 18.5, "roce": 20.2, "ebitdaMargin": 32.0 }
+    ]
+  }
+}

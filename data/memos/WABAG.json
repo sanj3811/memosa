@@ -1,0 +1,135 @@
+{
+  "ticker": "WABAG",
+  "name": "VA Tech Wabag",
+  "exchange": "NSE",
+  "sector": "Water",
+  "status": "active",
+  "updatedAt": "Mar 20, 2026",
+  "analystTarget": 1850,
+  "entryPrice": 1380,
+  "entryDate": "Jan 15",
+  "earningsDate": "May 12",
+
+  "thesis": "VA Tech Wabag is India's largest pure-play water treatment company, positioned at the intersection of a massive government spending cycle and an irreversible urbanization trend. The Jal Jeevan Mission alone targets Rs.3.6 lakh crore in water infrastructure — Wabag is the most direct beneficiary.\n\nThe order book stands at Rs.12,800 Cr (4.2x trailing revenue), providing exceptional revenue visibility. International operations across the Middle East and Africa add diversification and higher-margin EPC contracts.\n\nThe key inflection: Wabag is transitioning from a pure EPC model to an O&M-heavy annuity model (currently 22% of revenue, targeting 35% by FY28). This shift will structurally improve margins, reduce working capital intensity, and command a higher valuation multiple.",
+
+  "tailwinds": [
+    "Jal Jeevan Mission — Rs.3.6 lakh crore government spending commitment",
+    "Urban water stress creating mandatory infrastructure investment",
+    "O&M transition improving margin and revenue visibility",
+    "Strong order book at 4.2x revenue",
+    "International diversification in Middle East and Africa"
+  ],
+
+  "headwinds": [
+    "High working capital intensity typical of EPC companies",
+    "Government payment delays can stretch receivables",
+    "Execution risk on large international projects",
+    "Competition from L&T Water and Thermax",
+    "Foreign currency risk on international contracts"
+  ],
+
+  "whyWinner": "Wabag is the only listed Indian company with end-to-end water treatment capabilities across desalination, sewage treatment, and industrial water recycling. While L&T Water is larger, it operates as a division within a conglomerate — Wabag offers pure-play exposure. The company's technology partnerships (with firms like Veolia) give it a moat in complex projects that smaller EPC players cannot bid for. Critically, Wabag's international track record (50+ countries) is unmatched by any Indian peer, giving it access to higher-margin contracts that domestic-only players cannot compete for.",
+
+  "catalysts": [
+    "Major Jal Jeevan Mission order wins in H2FY26",
+    "O&M revenue crossing 30% of total",
+    "Working capital improvement to sub-90 days",
+    "Middle East order pipeline conversion"
+  ],
+
+  "risks": [
+    "Working capital deterioration",
+    "Government payment delays",
+    "Project execution overruns",
+    "Key management departure risk"
+  ],
+
+  "priceHistory": [
+    { "week": "Apr 25", "price": 1180 },
+    { "week": "May", "price": 1220 },
+    { "week": "Jun", "price": 1340 },
+    { "week": "Jul", "price": 1380 },
+    { "week": "Aug", "price": 1450 },
+    { "week": "Sep", "price": 1520 },
+    { "week": "Oct", "price": 1610 },
+    { "week": "Nov", "price": 1580 },
+    { "week": "Dec", "price": 1490 },
+    { "week": "Jan 26", "price": 1540 },
+    { "week": "Feb", "price": 1610 },
+    { "week": "Mar", "price": 1642 }
+  ],
+
+  "horizons": {
+    "short": {
+      "label": "Short Term (1Y)",
+      "soWhat": "Trading at 38.5x with strong order book visibility. Near-term upside capped by working capital concerns, but downside protected by order pipeline. Hold with conviction.",
+      "financials": [
+        { "year": "FY23", "revenue": 2850, "pat": 185, "actual": true },
+        { "year": "FY24", "revenue": 3100, "pat": 225, "actual": true },
+        { "year": "FY25E", "revenue": 3600, "pat": 280, "actual": false },
+        { "year": "FY26E", "revenue": 4200, "pat": 350, "actual": false }
+      ],
+      "assumptions": {
+        "wacc": "13.0%",
+        "terminalGrowth": "5%",
+        "loanGrowth": "N/A",
+        "nim": "N/A",
+        "creditCost": "N/A",
+        "crar": "N/A",
+        "notes": "Revenue growth 16-18% driven by order book execution. EBITDA margins expanding to 12.5% as O&M mix increases. Working capital days expected at 95-100."
+      },
+      "score": { "valuation": 55, "growth": 80, "quality": 65, "momentum": 82, "safety": 50, "dividends": 35 },
+      "scoreRationale": "High growth and momentum offset by stretched valuations and working capital risk. Low dividend yield typical of growth-stage infra."
+    },
+    "medium": {
+      "label": "Medium Term (2-3Y)",
+      "soWhat": "Strong conviction. The O&M transition is the key unlock — as annuity revenue crosses 30%, expect multiple re-rating from 38x to 45-50x. Working capital improvement is the near-term catalyst.",
+      "financials": [
+        { "year": "FY24", "revenue": 3100, "pat": 225, "actual": true },
+        { "year": "FY25E", "revenue": 3600, "pat": 280, "actual": false },
+        { "year": "FY26E", "revenue": 4200, "pat": 350, "actual": false },
+        { "year": "FY27E", "revenue": 5000, "pat": 450, "actual": false },
+        { "year": "FY28E", "revenue": 5800, "pat": 560, "actual": false }
+      ],
+      "assumptions": {
+        "wacc": "12.5%",
+        "terminalGrowth": "5.5%",
+        "loanGrowth": "N/A",
+        "nim": "N/A",
+        "creditCost": "N/A",
+        "crar": "N/A",
+        "notes": "Revenue CAGR of 20%+ as Jal Jeevan Mission orders convert. O&M hitting 35% of revenue by FY28. EBITDA margins expanding to 14%. Working capital normalising to 80 days."
+      },
+      "score": { "valuation": 62, "growth": 88, "quality": 72, "momentum": 78, "safety": 55, "dividends": 38 },
+      "scoreRationale": "Medium-term view strongest as O&M transition delivers margin expansion and working capital improvement simultaneously."
+    },
+    "long": {
+      "label": "Long Term (5Y+)",
+      "soWhat": "India's water infrastructure gap is a multi-decade opportunity. Wabag as the market leader with technology moats is positioned to compound at 20%+ revenue growth for the next decade. Target 3-4x from current levels.",
+      "financials": [
+        { "year": "FY26E", "revenue": 4200, "pat": 350, "actual": false },
+        { "year": "FY27E", "revenue": 5000, "pat": 450, "actual": false },
+        { "year": "FY28E", "revenue": 5800, "pat": 560, "actual": false },
+        { "year": "FY29E", "revenue": 6800, "pat": 700, "actual": false },
+        { "year": "FY30E", "revenue": 8000, "pat": 880, "actual": false }
+      ],
+      "assumptions": {
+        "wacc": "11.5%",
+        "terminalGrowth": "6%",
+        "loanGrowth": "N/A",
+        "nim": "N/A",
+        "creditCost": "N/A",
+        "crar": "N/A",
+        "notes": "Structural play on India's water infrastructure deficit. Per-capita water availability declining forces mandatory government spending. O&M at 40%+ of revenue creates annuity stream. International expansion in Africa and SE Asia adds growth vectors."
+      },
+      "score": { "valuation": 68, "growth": 92, "quality": 78, "momentum": 72, "safety": 60, "dividends": 42 },
+      "scoreRationale": "Long-term score highest on growth as India's water infra gap provides a decade-long runway. Quality improves as O&M dominates the mix."
+    }
+  },
+
+  "changelog": [
+    { "date": "Mar 20", "note": "Updated order book data post Q3" },
+    { "date": "Feb 15", "note": "Added O&M transition analysis" },
+    { "date": "Jan 15", "note": "Initial memo published" }
+  ]
+}

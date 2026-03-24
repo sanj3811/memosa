@@ -1,0 +1,6 @@
+[
+  { "id": "psu-banks", "name": "PSU Banks", "icon": "🏦" },
+  { "id": "water", "name": "Water Infra", "icon": "💧" },
+  { "id": "defence", "name": "Defence", "icon": "🛡️" },
+  { "id": "chem", "name": "Specialty Chem", "icon": "⚗️" }
+]
