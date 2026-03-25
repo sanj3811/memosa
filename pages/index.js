@@ -351,7 +351,19 @@ function AboutView() {
 // ── Placeholder for Memo Detail View ──
 // The full memo view from v7 goes here.
 // For launch, this renders the memo data from your JSON files.
-function MemoDetailView({ memo, setView, stars, tog }) {
+function MemoDetailView({ memo, peers, setView, stars, tog }) {
+  const [horizon, setHorizon] = useState("short");
+  const [chartsReady, setChartsReady] = useState(false);
+
+  useEffect(() => {
+    // Wait for recharts to load via dynamic import
+    const check = () => {
+      if (typeof window !== "undefined" && window.__recharts) { setChartsReady(true); return; }
+      setTimeout(check, 100);
+    };
+    check();
+  }, []);
+
   if (!memo) {
     return (
       <div style={{ padding: "60px 28px", textAlign: "center" }}>
@@ -360,6 +372,29 @@ function MemoDetailView({ memo, setView, stars, tog }) {
     );
   }
 
+  const rc = typeof window !== "undefined" ? window.__recharts || {} : {};
+  const { LineChart, Line, BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceLine, Area, AreaChart, Legend } = rc;
+
+  const hz = memo.horizons ? memo.horizons[horizon] : null;
+  const upside = memo.analystTarget && memo.entryPrice ? (((memo.analystTarget - memo.entryPrice) / memo.entryPrice) * 100).toFixed(1) : null;
+  const sectorPeers = peers ? (peers[memo.sector] || null) : null;
+
+  // Radar data for score
+  const radarData = hz && hz.score ? [
+    { dim: "Valuation", val: hz.score.valuation },
+    { dim: "Growth", val: hz.score.growth },
+    { dim: "Quality", val: hz.score.quality },
+    { dim: "Momentum", val: hz.score.momentum },
+    { dim: "Safety", val: hz.score.safety },
+    { dim: "Dividends", val: hz.score.dividends },
+  ] : [];
+
+  const hzKeys = [
+    { key: "short", label: "Short (1Y)" },
+    { key: "medium", label: "Medium (2-3Y)" },
+    { key: "long", label: "Long (5Y+)" },
+  ];
+
   return (
     <div style={{ padding: "28px", maxWidth: 1100, margin: "0 auto", animation: "fade .25s ease" }}>
       <button onClick={() => setView("memos")} style={{ background: "none", border: "none", color: P.t3, cursor: "pointer", fontSize: 12.5, fontFamily: P.f, marginBottom: 22, fontWeight: 500, transition: P.fast }}
@@ -367,7 +402,7 @@ function MemoDetailView({ memo, setView, stars, tog }) {
         {"\u2190 Back to Memos"}
       </button>
 
-      {/* Header */}
+      {/* ── Header ── */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 7 }}>
@@ -382,7 +417,50 @@ function MemoDetailView({ memo, setView, stars, tog }) {
         </div>
       </div>
 
-      {/* Thesis */}
+      {/* ── Key Metrics Bar ── */}
+      <Card style={{ padding: "16px 22px", marginBottom: 14, display: "flex", gap: 28, alignItems: "center", flexWrap: "wrap" }} h={false}>
+        {[
+          { label: "Entry Price", value: `\u20B9${memo.entryPrice}`, mono: true },
+          { label: "Analyst Target", value: `\u20B9${memo.analystTarget}`, mono: true },
+          upside ? { label: "Upside", value: `${upside}%`, mono: true, color: parseFloat(upside) > 0 ? P.green : P.red } : null,
+          { label: "Entry Date", value: memo.entryDate },
+          { label: "Earnings", value: memo.earningsDate },
+          { label: "Sector", value: memo.sector },
+        ].filter(Boolean).map((m, i) => (
+          <div key={i} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <span style={{ fontSize: 10, color: P.t3, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{m.label}</span>
+            <span style={{ fontSize: 14, fontWeight: 700, fontFamily: m.mono ? P.mono : P.f, color: m.color || P.text }}>{m.value}</span>
+          </div>
+        ))}
+      </Card>
+
+      {/* ── Price History Chart ── */}
+      {memo.priceHistory && chartsReady && ResponsiveContainer && (
+        <Card style={{ padding: "22px 24px", marginBottom: 14 }} h={false}>
+          <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 3, height: 18, background: P.acc, borderRadius: 2, display: "inline-block" }} />
+            Price History
+          </h2>
+          <ResponsiveContainer width="100%" height={260}>
+            <AreaChart data={memo.priceHistory} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
+              <defs>
+                <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={P.acc} stopOpacity={0.25} />
+                  <stop offset="95%" stopColor={P.acc} stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke={P.border} />
+              <XAxis dataKey="week" tick={{ fontSize: 10, fill: P.t3, fontFamily: P.mono }} axisLine={{ stroke: P.border }} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: P.t3, fontFamily: P.mono }} axisLine={false} tickLine={false} domain={["auto", "auto"]} />
+              <Tooltip contentStyle={{ fontSize: 12, fontFamily: P.mono, borderRadius: 8, border: `1px solid ${P.border}`, boxShadow: P.shadow }} formatter={(v) => [`\u20B9${v}`, "Price"]} />
+              {memo.entryPrice && <ReferenceLine y={memo.entryPrice} stroke={P.green} strokeDasharray="5 3" label={{ value: `Entry \u20B9${memo.entryPrice}`, position: "right", fontSize: 10, fill: P.green, fontFamily: P.mono }} />}
+              <Area type="monotone" dataKey="price" stroke={P.acc} strokeWidth={2.5} fill="url(#priceGrad)" dot={{ r: 3, fill: P.acc, stroke: "#fff", strokeWidth: 2 }} activeDot={{ r: 5 }} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </Card>
+      )}
+
+      {/* ── Investment Thesis ── */}
       <Card style={{ padding: "24px", marginBottom: 14 }} h={false}>
         <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ width: 3, height: 18, background: P.acc, borderRadius: 2, display: "inline-block" }} />
@@ -390,7 +468,6 @@ function MemoDetailView({ memo, setView, stars, tog }) {
         </h2>
         <div style={{ fontSize: 14, lineHeight: 1.85, color: P.t2, whiteSpace: "pre-line" }}>{memo.thesis}</div>
 
-        {/* Tailwinds & Headwinds */}
         {memo.tailwinds && memo.headwinds && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 20 }}>
             <div style={{ background: P.greenDim, borderRadius: 12, padding: "16px 18px" }}>
@@ -409,7 +486,7 @@ function MemoDetailView({ memo, setView, stars, tog }) {
         )}
       </Card>
 
-      {/* Why a Winner */}
+      {/* ── Why a Winner ── */}
       {memo.whyWinner && (
         <Card style={{ padding: "22px 24px", marginBottom: 14, borderColor: P.acc + "22", background: `linear-gradient(135deg, ${P.accDim}, ${P.card})` }} h={false}>
           <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 12, color: P.acc }}>{"\u{1F3C6}"} Why {memo.name} is a Winner</h2>
@@ -417,7 +494,168 @@ function MemoDetailView({ memo, setView, stars, tog }) {
         </Card>
       )}
 
-      {/* Catalysts & Risks */}
+      {/* ── Horizon Analysis ── */}
+      {memo.horizons && (
+        <Card style={{ padding: "24px", marginBottom: 14 }} h={false}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 18, display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 3, height: 18, background: P.purple, borderRadius: 2, display: "inline-block" }} />
+            Horizon Analysis
+          </h2>
+
+          {/* Toggle */}
+          <div style={{ display: "flex", gap: 6, marginBottom: 22, background: P.bg, borderRadius: 10, padding: 4, width: "fit-content" }}>
+            {hzKeys.map(h => (
+              <button key={h.key} onClick={() => setHorizon(h.key)} style={{
+                padding: "8px 18px", borderRadius: 8, border: "none", cursor: "pointer",
+                fontSize: 12, fontWeight: 700, fontFamily: P.f, transition: P.fast,
+                background: horizon === h.key ? P.card : "transparent",
+                color: horizon === h.key ? P.acc : P.t3,
+                boxShadow: horizon === h.key ? P.shadow : "none",
+              }}>{h.label}</button>
+            ))}
+          </div>
+
+          {hz && (
+            <>
+              {/* So What */}
+              <div style={{ background: P.bg, borderRadius: 12, padding: "16px 20px", marginBottom: 20, borderLeft: `3px solid ${P.purple}` }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: P.purple, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6, display: "block" }}>{hz.label} — So What?</span>
+                <div style={{ fontSize: 13.5, lineHeight: 1.75, color: P.t2 }}>{hz.soWhat}</div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: chartsReady && BarChart ? "1fr 1fr" : "1fr", gap: 18, marginBottom: 18 }}>
+                {/* Financials Bar Chart */}
+                {hz.financials && chartsReady && BarChart && ResponsiveContainer && (
+                  <div>
+                    <h3 style={{ fontSize: 12.5, fontWeight: 700, marginBottom: 12, color: P.t2 }}>Revenue & PAT Projections (Cr)</h3>
+                    <ResponsiveContainer width="100%" height={240}>
+                      <BarChart data={hz.financials} margin={{ top: 5, right: 10, bottom: 5, left: 10 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={P.border} />
+                        <XAxis dataKey="year" tick={{ fontSize: 10, fill: P.t3, fontFamily: P.mono }} axisLine={{ stroke: P.border }} tickLine={false} />
+                        <YAxis tick={{ fontSize: 9, fill: P.t3, fontFamily: P.mono }} axisLine={false} tickLine={false} tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}K` : v} />
+                        <Tooltip contentStyle={{ fontSize: 11, fontFamily: P.mono, borderRadius: 8, border: `1px solid ${P.border}` }} formatter={(v, name) => [`\u20B9${v.toLocaleString()} Cr`, name === "revenue" ? "Revenue" : "PAT"]} />
+                        <Bar dataKey="revenue" fill={P.acc} radius={[4, 4, 0, 0]} opacity={0.85} name="revenue" />
+                        <Bar dataKey="pat" fill={P.green} radius={[4, 4, 0, 0]} opacity={0.85} name="pat" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                    <div style={{ display: "flex", gap: 16, justifyContent: "center", marginTop: 6 }}>
+                      <span style={{ fontSize: 10, color: P.t3, display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: P.acc, display: "inline-block" }} /> Revenue</span>
+                      <span style={{ fontSize: 10, color: P.t3, display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: P.green, display: "inline-block" }} /> PAT</span>
+                      {hz.financials.some(f => f.actual) && hz.financials.some(f => !f.actual) && (
+                        <span style={{ fontSize: 10, color: P.t3 }}>Solid = Actual | Light = Estimate</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Score Radar */}
+                {radarData.length > 0 && chartsReady && RadarChart && ResponsiveContainer && (
+                  <div>
+                    <h3 style={{ fontSize: 12.5, fontWeight: 700, marginBottom: 12, color: P.t2 }}>Conviction Scorecard</h3>
+                    <ResponsiveContainer width="100%" height={240}>
+                      <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                        <PolarGrid stroke={P.border} />
+                        <PolarAngleAxis dataKey="dim" tick={{ fontSize: 10, fill: P.t3, fontFamily: P.f }} />
+                        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 8, fill: P.t3 }} axisLine={false} />
+                        <Radar name="Score" dataKey="val" stroke={P.acc} fill={P.acc} fillOpacity={0.2} strokeWidth={2} dot={{ r: 3, fill: P.acc }} />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                    {hz.scoreRationale && (
+                      <div style={{ fontSize: 11.5, color: P.t3, lineHeight: 1.6, marginTop: 8, fontStyle: "italic", textAlign: "center", padding: "0 12px" }}>{hz.scoreRationale}</div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Assumptions Table */}
+              {hz.assumptions && (
+                <div style={{ marginTop: 4 }}>
+                  <h3 style={{ fontSize: 12.5, fontWeight: 700, marginBottom: 10, color: P.t2 }}>Key Assumptions</h3>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 8 }}>
+                    {[
+                      { label: "WACC", value: hz.assumptions.wacc },
+                      { label: "Terminal Growth", value: hz.assumptions.terminalGrowth },
+                      { label: "Loan Growth", value: hz.assumptions.loanGrowth },
+                      { label: "NIM", value: hz.assumptions.nim },
+                      { label: "Credit Cost", value: hz.assumptions.creditCost },
+                      { label: "CRAR", value: hz.assumptions.crar },
+                    ].filter(a => a.value).map((a, i) => (
+                      <div key={i} style={{ background: P.bg, borderRadius: 8, padding: "10px 14px" }}>
+                        <div style={{ fontSize: 9.5, color: P.t3, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 3 }}>{a.label}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, fontFamily: P.mono, color: P.text }}>{a.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {hz.assumptions.notes && (
+                    <div style={{ fontSize: 12, color: P.t3, lineHeight: 1.6, marginTop: 10, padding: "10px 14px", background: P.bg, borderRadius: 8, fontStyle: "italic" }}>{hz.assumptions.notes}</div>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </Card>
+      )}
+
+      {/* ── Asset Quality Chart ── */}
+      {memo.assetQuality && chartsReady && ResponsiveContainer && LineChart && (
+        <Card style={{ padding: "22px 24px", marginBottom: 14 }} h={false}>
+          <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 3, height: 18, background: P.green, borderRadius: 2, display: "inline-block" }} />
+            Asset Quality Trend
+          </h2>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={memo.assetQuality} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={P.border} />
+              <XAxis dataKey="year" tick={{ fontSize: 10, fill: P.t3, fontFamily: P.mono }} axisLine={{ stroke: P.border }} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: P.t3, fontFamily: P.mono }} axisLine={false} tickLine={false} unit="%" />
+              <Tooltip contentStyle={{ fontSize: 11, fontFamily: P.mono, borderRadius: 8, border: `1px solid ${P.border}` }} formatter={(v, name) => [`${v}%`, name === "gnpa" ? "GNPA" : "NNPA"]} />
+              <Line type="monotone" dataKey="gnpa" stroke={P.red} strokeWidth={2.5} dot={{ r: 4, fill: P.red, stroke: "#fff", strokeWidth: 2 }} name="gnpa" />
+              <Line type="monotone" dataKey="nnpa" stroke={P.amber} strokeWidth={2.5} dot={{ r: 4, fill: P.amber, stroke: "#fff", strokeWidth: 2 }} name="nnpa" />
+            </LineChart>
+          </ResponsiveContainer>
+          <div style={{ display: "flex", gap: 16, justifyContent: "center", marginTop: 8 }}>
+            <span style={{ fontSize: 10, color: P.t3, display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 8, height: 8, borderRadius: "50%", background: P.red, display: "inline-block" }} /> GNPA %</span>
+            <span style={{ fontSize: 10, color: P.t3, display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 8, height: 8, borderRadius: "50%", background: P.amber, display: "inline-block" }} /> NNPA %</span>
+          </div>
+        </Card>
+      )}
+
+      {/* ── Peer Comparison ── */}
+      {sectorPeers && (
+        <Card style={{ padding: "22px 24px", marginBottom: 14 }} h={false}>
+          <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 3, height: 18, background: P.forecast, borderRadius: 2, display: "inline-block" }} />
+            Peer Comparison — {memo.sector}
+          </h2>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, fontFamily: P.mono }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${P.border}` }}>
+                  {["Company", "MCap", "P/E", "P/B", "ROE", "ROCE", sectorPeers.relevantMetric].map(h => (
+                    <th key={h} style={{ padding: "8px 10px", textAlign: h === "Company" ? "left" : "right", fontSize: 10, fontWeight: 700, color: P.t3, textTransform: "uppercase", letterSpacing: 0.5 }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sectorPeers.peers.map((p, i) => (
+                  <tr key={i} style={{ borderBottom: `1px solid ${P.border}44`, transition: P.fast }}
+                    onMouseEnter={e => e.currentTarget.style.background = P.hover} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                    <td style={{ padding: "10px", fontFamily: P.f, fontWeight: 600, fontSize: 12.5 }}>{p.name}</td>
+                    <td style={{ padding: "10px", textAlign: "right", fontSize: 11 }}>{p.mcap}</td>
+                    <td style={{ padding: "10px", textAlign: "right" }}>{p.pe}x</td>
+                    <td style={{ padding: "10px", textAlign: "right" }}>{p.pb}x</td>
+                    <td style={{ padding: "10px", textAlign: "right" }}>{p.roe}%</td>
+                    <td style={{ padding: "10px", textAlign: "right" }}>{p.roce}</td>
+                    <td style={{ padding: "10px", textAlign: "right", fontWeight: 700, color: P.acc }}>{p[sectorPeers.relevantMetricKey]}{sectorPeers.relevantMetricKey === "gnpa" || sectorPeers.relevantMetricKey === "ebitdaMargin" ? "%" : ""}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+
+      {/* ── Catalysts & Risks ── */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
         {[{ t: "Catalysts", i: "\u25B2", c: P.green, items: memo.catalysts }, { t: "Risks", i: "\u25BC", c: P.red, items: memo.risks }].map(sec => (
           <Card key={sec.t} style={{ padding: "18px 20px" }} h={false}>
@@ -431,7 +669,7 @@ function MemoDetailView({ memo, setView, stars, tog }) {
         ))}
       </div>
 
-      {/* Changelog */}
+      {/* ── Changelog ── */}
       <Card style={{ padding: "18px 20px" }} h={false}>
         <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 11 }}>Changelog</h3>
         {(memo.changelog || []).map((c, i) => (
@@ -488,12 +726,13 @@ export default function MemoSA({ stocks, sectors, peers, memos }) {
 
   return (
     <div style={{ background: P.bg, minHeight: "100vh", color: P.text, fontFamily: P.f }}>
+      <RechartsComponents />
       <TickerBar />
       <Nav view={view} setView={setView} wc={stars.size} />
 
       {view === "home" && <HomeView stocks={enrichedStocks} sectors={sectors} setView={setView} setMemo={setMemoTicker} setSec={setSec} />}
       {view === "memos" && <MemosView stocks={enrichedStocks} setView={setView} setMemo={setMemoTicker} stars={stars} tog={tog} />}
-      {view === "memo" && <MemoDetailView memo={currentMemo} setView={setView} stars={stars} tog={tog} />}
+      {view === "memo" && <MemoDetailView memo={currentMemo} peers={peers} setView={setView} stars={stars} tog={tog} />}
       {view === "compare" && <div style={{ padding: "60px 28px", textAlign: "center", color: P.t3 }}>Compare view — use the v7 artifact component</div>}
       {view === "watchlist" && <div style={{ padding: "60px 28px", textAlign: "center", color: P.t3 }}>Watchlist view — use the v7 artifact component</div>}
       {view === "about" && <AboutView />}
