@@ -36,11 +36,11 @@ export default async function handler(req, res) {
       change: parseFloat((idx.percentChange || 0).toFixed(2)),
     }));
 
-    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=120");
-    return res.status(200).json({ indices, timestamp: new Date().toISOString() });
+    res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate=30");
+    return res.status(200).json(indices);
   } catch (error) {
     console.error("Error fetching indices:", error.message);
-    res.setHeader("Cache-Control", "s-maxage=300");
-    return res.status(200).json({ indices: [], error: "Temporarily unavailable", timestamp: new Date().toISOString() });
+    res.setHeader("Cache-Control", "s-maxage=60");
+    return res.status(200).json([]);
   }
 }

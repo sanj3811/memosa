@@ -151,21 +151,44 @@ function hc(c) {
 
 // ── Ticker Bar ──
 function TickerBar() {
-  // TODO: Replace with live data from /api/indices
-  const tickers = [
-    { t: "NIFTY 50", v: "23,842", c: +0.62 }, { t: "SENSEX", v: "78,620", c: +0.58 },
-    { t: "SMLCAP", v: "17,456", c: +1.24 }, { t: "PSU BANK", v: "6,892", c: +1.82 },
-    { t: "BANK NIFTY", v: "51,120", c: +0.41 }, { t: "VIX", v: "13.42", c: -3.20 },
+  const fallback = [
+    { name: "NIFTY 50", value: "23,842", change: +0.62 }, { name: "SENSEX", value: "78,620", change: +0.58 },
+    { name: "NIFTY SMLCAP 250", value: "17,456", change: +1.24 }, { name: "NIFTY PSU BANK", value: "6,892", change: +1.82 },
+    { name: "NIFTY BANK", value: "51,120", change: +0.41 }, { name: "INDIA VIX", value: "13.42", change: -3.20 },
   ];
+  const preferred = ["NIFTY 50", "NIFTY NEXT 50", "SENSEX", "NIFTY SMLCAP 250", "NIFTY MIDCAP 150", "NIFTY PSU BANK", "NIFTY BANK", "INDIA VIX", "NIFTY IT", "NIFTY FINANCIAL SERVICES"];
+  const [tickers, setTickers] = useState(fallback);
+  const [live, setLive] = useState(false);
+
+  useEffect(() => {
+    async function fetchIndices() {
+      try {
+        const r = await fetch("/api/indices");
+        const data = await r.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const filtered = data.filter(d => preferred.some(p => d.name && d.name.toUpperCase().includes(p.toUpperCase())));
+          if (filtered.length > 0) { setTickers(filtered); setLive(true); }
+        }
+      } catch (e) {}
+    }
+    fetchIndices();
+    const iv = setInterval(fetchIndices, 15000);
+    return () => clearInterval(iv);
+  }, []);
+
   const d = [...tickers, ...tickers];
   return (
     <div style={{ background: P.shark, overflow: "hidden", height: 36, display: "flex", alignItems: "center" }}>
       <div style={{ display: "inline-flex", gap: 34, animation: "tick 20s linear infinite", whiteSpace: "nowrap", paddingLeft: 16 }}>
+        {live && <span style={{ display: "inline-flex", alignItems: "center", gap: 5, marginRight: 8 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ADE80", animation: "dot 1.5s ease infinite" }} />
+          <span style={{ fontFamily: P.mono, fontSize: 9, color: "#4ADE80", fontWeight: 600, letterSpacing: 0.5 }}>LIVE</span>
+        </span>}
         {d.map((t, i) => (
           <span key={i} style={{ fontFamily: P.mono, fontSize: 11, display: "inline-flex", alignItems: "center", gap: 7 }}>
-            <span style={{ color: "#6B6F78" }}>{t.t}</span>
-            <span style={{ color: "#E4E4E7", fontWeight: 600 }}>{t.v}</span>
-            <span style={{ color: t.c >= 0 ? "#4ADE80" : "#FB7185", fontWeight: 600, fontSize: 10.5 }}>{t.c >= 0 ? "+" : ""}{t.c}%</span>
+            <span style={{ color: "#6B6F78" }}>{t.name}</span>
+            <span style={{ color: "#E4E4E7", fontWeight: 600 }}>{t.value}</span>
+            <span style={{ color: (t.change || 0) >= 0 ? "#4ADE80" : "#FB7185", fontWeight: 600, fontSize: 10.5 }}>{(t.change || 0) >= 0 ? "+" : ""}{parseFloat(t.change || 0).toFixed(2)}%</span>
           </span>
         ))}
       </div>
@@ -341,11 +364,20 @@ function IndexHeatmap() {
   ]);
 
   useEffect(() => {
-    fetch("/api/indices").then(r => r.json()).then(data => {
-      if (Array.isArray(data) && data.length > 0) {
-        setIndices(data.map(d => ({ name: d.name, value: typeof d.value === "number" ? d.value.toLocaleString("en-IN") : d.value, change: d.change })));
-      }
-    }).catch(() => {});
+    const preferred = ["NIFTY 50", "SENSEX", "NIFTY SMLCAP 250", "NIFTY PSU BANK", "NIFTY BANK", "INDIA VIX", "NIFTY MIDCAP 150", "NIFTY IT"];
+    async function fetchIndices() {
+      try {
+        const r = await fetch("/api/indices");
+        const data = await r.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const filtered = data.filter(d => preferred.some(p => d.name && d.name.toUpperCase().includes(p.toUpperCase())));
+          if (filtered.length > 0) setIndices(filtered.map(d => ({ name: d.name, value: typeof d.value === "number" ? d.value.toLocaleString("en-IN") : d.value, change: d.change })));
+        }
+      } catch (e) {}
+    }
+    fetchIndices();
+    const iv = setInterval(fetchIndices, 15000);
+    return () => clearInterval(iv);
   }, []);
 
   return (
@@ -754,7 +786,7 @@ export default function MemoSA({ stocks, sectors, peers, memos }) {
       } catch (e) { /* fail silently */ }
     }
     fetchPrices();
-    const interval = setInterval(fetchPrices, 60000);
+    const interval = setInterval(fetchPrices, 15000);
     return () => clearInterval(interval);
   }, [stocks]);
 
