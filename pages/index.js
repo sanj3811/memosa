@@ -210,7 +210,7 @@ function StkMap({ stocks, onClick }) {
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ fontFamily: P.mono, fontSize: 12, fontWeight: 600 }}>{d.pe}x</span>
               <span style={{ fontFamily: P.mono, fontSize: 11, fontWeight: 700, color: cl.tx }}>
-                {(d.change || 0) >= 0 ? "+" : ""}{d.change || 0}%
+                {(d.change || 0) >= 0 ? "+" : ""}{parseFloat(d.change || 0).toFixed(1)}%
               </span>
             </div>
           </Card>
@@ -319,6 +319,51 @@ function HomeView({ stocks, sectors, setView, setMemo, setSec }) {
         <SH t="Sectors" sub="Browse by theme" />
         <SectorCards sectors={sectors} stocks={stocks} onClick={id => { setSec(id); setView("sector"); }} />
       </div>
+      <div style={{ marginBottom: 40 }}>
+        <SH t="Index Heatmap" sub="Key market benchmarks" />
+        <IndexHeatmap />
+      </div>
+    </div>
+  );
+}
+
+// ── Index Heatmap ──
+function IndexHeatmap() {
+  const [indices, setIndices] = useState([
+    { name: "NIFTY 50", value: "23,842", change: +0.62 },
+    { name: "SENSEX", value: "78,620", change: +0.58 },
+    { name: "NIFTY SMLCAP 250", value: "17,456", change: +1.24 },
+    { name: "NIFTY PSU BANK", value: "6,892", change: +1.82 },
+    { name: "NIFTY BANK", value: "51,120", change: +0.41 },
+    { name: "INDIA VIX", value: "13.42", change: -3.20 },
+    { name: "NIFTY MIDCAP 150", value: "21,340", change: +0.95 },
+    { name: "NIFTY IT", value: "34,560", change: -0.48 },
+  ]);
+
+  useEffect(() => {
+    fetch("/api/indices").then(r => r.json()).then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        setIndices(data.map(d => ({ name: d.name, value: typeof d.value === "number" ? d.value.toLocaleString("en-IN") : d.value, change: d.change })));
+      }
+    }).catch(() => {});
+  }, []);
+
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))", gap: 8 }}>
+      {indices.map((idx, i) => {
+        const cl = hc(idx.change || 0);
+        return (
+          <Card key={idx.name} style={{ padding: "14px 16px", background: cl.bg, borderColor: cl.bd, animation: `up .3s ease ${i * .03}s both` }} h={false}>
+            <div style={{ fontSize: 10.5, color: P.t3, fontWeight: 600, marginBottom: 6, letterSpacing: 0.3 }}>{idx.name}</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <span style={{ fontFamily: P.mono, fontSize: 15, fontWeight: 700, color: P.text }}>{idx.value}</span>
+              <span style={{ fontFamily: P.mono, fontSize: 11.5, fontWeight: 700, color: cl.tx }}>
+                {(idx.change || 0) >= 0 ? "+" : ""}{parseFloat(idx.change || 0).toFixed(2)}%
+              </span>
+            </div>
+          </Card>
+        );
+      })}
     </div>
   );
 }
