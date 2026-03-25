@@ -197,7 +197,7 @@ function TickerBar() {
 }
 
 // ── Nav ──
-function Nav({ view, setView, wc }) {
+function Nav({ view, setView }) {
   return (
     <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 28px", background: "rgba(255,255,255,0.88)", backdropFilter: "blur(20px) saturate(180%)", borderBottom: `1px solid ${P.border}`, position: "sticky", top: 0, zIndex: 100 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 9, cursor: "pointer", transition: P.fast }} onClick={() => setView("home")}
@@ -205,7 +205,7 @@ function Nav({ view, setView, wc }) {
         <Logo s={27} /><span style={{ fontFamily: P.f, fontSize: 18, fontWeight: 800, letterSpacing: -.7, color: P.shark }}>Memo<span style={{ color: P.acc }}>SA</span></span>
       </div>
       <div style={{ display: "flex", gap: 2, background: P.bg, borderRadius: 11, padding: 3 }}>
-        {[{ id: "home", l: "Home" }, { id: "memos", l: "Memos" }, { id: "compare", l: "Compare" }, { id: "watchlist", l: `Watchlist \u00B7 ${wc}` }, { id: "about", l: "About" }].map(n => (
+        {[{ id: "home", l: "Home" }, { id: "memos", l: "Memos" }, { id: "compare", l: "Compare" }, { id: "about", l: "About" }].map(n => (
           <button key={n.id} onClick={() => setView(n.id)} style={{ background: view === n.id ? P.surface : "transparent", color: view === n.id ? P.acc : P.t3, border: "none", padding: "7px 16px", borderRadius: 9, fontSize: 12.5, fontWeight: view === n.id ? 600 : 500, cursor: "pointer", fontFamily: P.f, transition: P.fast, boxShadow: view === n.id ? "0 1px 3px rgba(0,0,0,.05)" : "none" }}
             onMouseEnter={e => { if (view !== n.id) { e.currentTarget.style.color = P.t2; e.currentTarget.style.transform = "scale(1.03)"; } }}
             onMouseLeave={e => { if (view !== n.id) { e.currentTarget.style.color = P.t3; e.currentTarget.style.transform = "scale(1)"; } }}>
@@ -231,7 +231,7 @@ function StkMap({ stocks, onClick }) {
             </div>
             <div style={{ fontSize: 10, color: P.t2, marginBottom: 4 }}>{d.name}</div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontFamily: P.mono, fontSize: 12, fontWeight: 600 }}>{d.pe}x</span>
+              <span style={{ fontFamily: P.mono, fontSize: 12, fontWeight: 600 }}>{d.livePrice ? `\u20B9${d.livePrice.toLocaleString("en-IN")}` : `\u20B9${d.entryPrice || "\u2014"}`}</span>
               <span style={{ fontFamily: P.mono, fontSize: 11, fontWeight: 700, color: cl.tx }}>
                 {(d.change || 0) >= 0 ? "+" : ""}{parseFloat(d.change || 0).toFixed(1)}%
               </span>
@@ -400,6 +400,86 @@ function IndexHeatmap() {
   );
 }
 
+// ── Compare View ──
+function CompareView({ stocks }) {
+  const [left, setLeft] = useState(stocks[0]?.ticker || "CANBK");
+  const [right, setRight] = useState(stocks[1]?.ticker || "WABAG");
+  const ls = stocks.find(s => s.ticker === left);
+  const rs = stocks.find(s => s.ticker === right);
+
+  const metrics = [
+    { label: "Price", fn: s => `\u20B9${s.livePrice ? s.livePrice.toLocaleString("en-IN") : s.entryPrice}` },
+    { label: "MCap", fn: s => `\u20B9${s.mcap >= 100000 ? (s.mcap / 100000).toFixed(1) + "L" : (s.mcap / 1000).toFixed(0) + "K"} Cr` },
+    { label: "P/E", fn: s => s.pe + "x" },
+    { label: "P/B", fn: s => s.pb + "x" },
+    { label: "ROE", fn: s => s.roe + "%" },
+    { label: "ROCE", fn: s => s.roce + (s.roce < 5 ? "" : "%") },
+    { label: "Today", fn: s => (s.change >= 0 ? "+" : "") + parseFloat(s.change || 0).toFixed(1) + "%", color: s => (s.change || 0) >= 0 ? P.green : P.red },
+    { label: "Since Memo", fn: s => { const cur = s.livePrice || s.entryPrice; const pct = ((cur - s.entryPrice) / s.entryPrice * 100).toFixed(1); return (+pct >= 0 ? "+" : "") + pct + "%"; }, color: s => { const cur = s.livePrice || s.entryPrice; return cur >= s.entryPrice ? P.green : P.red; } },
+    { label: "Sector", fn: s => s.sector },
+    { label: "Earnings", fn: s => s.earningsDate },
+  ];
+
+  return (
+    <div style={{ padding: "36px 28px", maxWidth: 900, margin: "0 auto", animation: "fade .3s ease" }}>
+      <SH t="Compare" sub="Side-by-side analysis" />
+
+      {/* Stock Selectors */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24 }}>
+        {[{ val: left, set: setLeft, other: right, label: "Stock A" }, { val: right, set: setRight, other: left, label: "Stock B" }].map((cfg, idx) => (
+          <Card key={idx} style={{ padding: "15px 16px" }} h={false}>
+            <div style={{ fontSize: 10.5, color: P.t3, fontWeight: 600, letterSpacing: .4, textTransform: "uppercase", marginBottom: 8 }}>{cfg.label}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+              {stocks.filter(s => s.ticker !== cfg.other).map(s => (
+                <button key={s.ticker} onClick={() => cfg.set(s.ticker)} style={{
+                  background: cfg.val === s.ticker ? P.shark : P.bg,
+                  color: cfg.val === s.ticker ? "#fff" : P.t2,
+                  border: `1px solid ${cfg.val === s.ticker ? P.shark : P.border}`,
+                  padding: "5px 11px", borderRadius: 7, fontSize: 10.5, fontWeight: 600,
+                  cursor: "pointer", fontFamily: P.mono, transition: P.fast,
+                }}
+                  onMouseEnter={e => { if (cfg.val !== s.ticker) e.currentTarget.style.transform = "scale(1.06)"; }}
+                  onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                >{s.ticker}</button>
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Comparison Table */}
+      {ls && rs && (
+        <Card style={{ overflow: "hidden" }} h={false}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 130px 1fr", borderBottom: `1px solid ${P.border}`, padding: "18px 22px", alignItems: "center" }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontFamily: P.mono, fontSize: 15, fontWeight: 700, color: P.acc }}>{ls.ticker}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, marginTop: 3 }}>{ls.name}</div>
+            </div>
+            <div style={{ textAlign: "center", fontSize: 12, color: P.t3, fontWeight: 700 }}>VS</div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontFamily: P.mono, fontSize: 15, fontWeight: 700, color: P.purple }}>{rs.ticker}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, marginTop: 3 }}>{rs.name}</div>
+            </div>
+          </div>
+          {metrics.map((m, i) => (
+            <div key={m.label} style={{
+              display: "grid", gridTemplateColumns: "1fr 130px 1fr", padding: "13px 22px",
+              borderBottom: `1px solid ${P.border}44`, alignItems: "center", transition: P.fast,
+              animation: `up .25s ease ${i * .03}s both`,
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = P.hover}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+              <div style={{ textAlign: "center", fontFamily: P.mono, fontSize: 13.5, fontWeight: 600, color: m.color ? m.color(ls) : P.text }}>{m.fn(ls)}</div>
+              <div style={{ textAlign: "center", fontSize: 10.5, color: P.t3, fontWeight: 600, textTransform: "uppercase" }}>{m.label}</div>
+              <div style={{ textAlign: "center", fontFamily: P.mono, fontSize: 13.5, fontWeight: 600, color: m.color ? m.color(rs) : P.text }}>{m.fn(rs)}</div>
+            </div>
+          ))}
+        </Card>
+      )}
+    </div>
+  );
+}
+
 // ── About View ──
 function AboutView() {
   return (
@@ -430,7 +510,9 @@ function AboutView() {
 // For launch, this renders the memo data from your JSON files.
 function MemoDetailView({ memo, peers, setView, stars, tog }) {
   const [horizon, setHorizon] = useState("short");
+  const [chartPeriod, setChartPeriod] = useState("1Y");
   const [chartsReady, setChartsReady] = useState(false);
+  const [liveStock, setLiveStock] = useState(null);
 
   useEffect(() => {
     // Wait for recharts to load via dynamic import
@@ -440,6 +522,21 @@ function MemoDetailView({ memo, peers, setView, stars, tog }) {
     };
     check();
   }, []);
+
+  // Fetch live stock price every 15s
+  useEffect(() => {
+    if (!memo) return;
+    async function fetchLive() {
+      try {
+        const r = await fetch(`/api/stock/${memo.ticker}`);
+        const data = await r.json();
+        if (data && data.price) setLiveStock(data);
+      } catch (e) {}
+    }
+    fetchLive();
+    const iv = setInterval(fetchLive, 15000);
+    return () => clearInterval(iv);
+  }, [memo?.ticker]);
 
   if (!memo) {
     return (
@@ -512,30 +609,79 @@ function MemoDetailView({ memo, peers, setView, stars, tog }) {
       </Card>
 
       {/* ── Price History Chart ── */}
-      {memo.priceHistory && chartsReady && ResponsiveContainer && (
-        <Card style={{ padding: "22px 24px", marginBottom: 14 }} h={false}>
-          <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ width: 3, height: 18, background: P.acc, borderRadius: 2, display: "inline-block" }} />
-            Price History
-          </h2>
-          <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={memo.priceHistory} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
-              <defs>
-                <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={P.acc} stopOpacity={0.25} />
-                  <stop offset="95%" stopColor={P.acc} stopOpacity={0.02} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke={P.border} />
-              <XAxis dataKey="week" tick={{ fontSize: 10, fill: P.t3, fontFamily: P.mono }} axisLine={{ stroke: P.border }} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: P.t3, fontFamily: P.mono }} axisLine={false} tickLine={false} domain={["auto", "auto"]} />
-              <Tooltip contentStyle={{ fontSize: 12, fontFamily: P.mono, borderRadius: 8, border: `1px solid ${P.border}`, boxShadow: P.shadow }} formatter={(v) => [`\u20B9${v}`, "Price"]} />
-              {memo.entryPrice && <ReferenceLine y={memo.entryPrice} stroke={P.green} strokeDasharray="5 3" label={{ value: `Entry \u20B9${memo.entryPrice}`, position: "right", fontSize: 10, fill: P.green, fontFamily: P.mono }} />}
-              <Area type="monotone" dataKey="price" stroke={P.acc} strokeWidth={2.5} fill="url(#priceGrad)" dot={{ r: 3, fill: P.acc, stroke: "#fff", strokeWidth: 2 }} activeDot={{ r: 5 }} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </Card>
-      )}
+      {memo.priceHistory && chartsReady && ResponsiveContainer && (() => {
+        const totalPts = memo.priceHistory.length;
+        const periods = [
+          { key: "1W", label: "1W", pts: 1, min: 1 },
+          { key: "1M", label: "1M", pts: 2, min: 2 },
+          { key: "1Y", label: "1Y", pts: totalPts, min: 6 },
+          { key: "3Y", label: "3Y", pts: totalPts * 3, min: totalPts + 1 },
+          { key: "5Y", label: "5Y", pts: totalPts * 5, min: totalPts + 1 },
+        ];
+        const sliceCount = periods.find(p => p.key === chartPeriod)?.pts || totalPts;
+        const sliced = memo.priceHistory.slice(-Math.min(sliceCount, totalPts));
+        const chartData = liveStock ? [...sliced, { week: "Now", price: liveStock.price }] : sliced;
+        const currentPrice = liveStock ? liveStock.price : sliced[sliced.length - 1]?.price;
+        const priceChange = liveStock ? liveStock.change : null;
+
+        return (
+          <Card style={{ padding: "22px 24px", marginBottom: 14 }} h={false}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
+              <div>
+                <h2 style={{ fontSize: 15, fontWeight: 700, display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                  <span style={{ width: 3, height: 18, background: P.acc, borderRadius: 2, display: "inline-block" }} />
+                  Price History
+                </h2>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
+                  <span style={{ fontFamily: P.mono, fontSize: 26, fontWeight: 800, color: P.text }}>{"\u20B9"}{currentPrice ? currentPrice.toLocaleString("en-IN") : "\u2014"}</span>
+                  {priceChange !== null && (
+                    <span style={{ fontFamily: P.mono, fontSize: 13, fontWeight: 700, color: priceChange >= 0 ? P.green : P.red }}>
+                      {priceChange >= 0 ? "+" : ""}{parseFloat(priceChange).toFixed(2)}%
+                    </span>
+                  )}
+                  {liveStock && (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: P.green, animation: "dot 1.5s ease infinite" }} />
+                      <span style={{ fontFamily: P.mono, fontSize: 9, color: P.green, fontWeight: 600, letterSpacing: 0.5 }}>LIVE</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 4, background: P.bg, borderRadius: 8, padding: 3 }}>
+                {periods.map(p => {
+                  const enabled = totalPts >= p.min;
+                  return (
+                    <button key={p.key} onClick={() => enabled && setChartPeriod(p.key)} style={{
+                      padding: "5px 12px", borderRadius: 6, border: "none", cursor: enabled ? "pointer" : "default",
+                      fontSize: 10.5, fontWeight: 700, fontFamily: P.mono, transition: P.fast,
+                      background: chartPeriod === p.key && enabled ? P.card : "transparent",
+                      color: !enabled ? P.border : chartPeriod === p.key ? P.acc : P.t3,
+                      boxShadow: chartPeriod === p.key && enabled ? P.shadow : "none",
+                      opacity: enabled ? 1 : 0.4,
+                    }}>{p.label}</button>
+                  );
+                })}
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={260}>
+              <AreaChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
+                <defs>
+                  <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={P.acc} stopOpacity={0.25} />
+                    <stop offset="95%" stopColor={P.acc} stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={P.border} />
+                <XAxis dataKey="week" tick={{ fontSize: 10, fill: P.t3, fontFamily: P.mono }} axisLine={{ stroke: P.border }} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: P.t3, fontFamily: P.mono }} axisLine={false} tickLine={false} domain={["auto", "auto"]} />
+                <Tooltip contentStyle={{ fontSize: 12, fontFamily: P.mono, borderRadius: 8, border: `1px solid ${P.border}`, boxShadow: P.shadow }} formatter={(v) => [`\u20B9${v}`, "Price"]} />
+                {memo.entryPrice && <ReferenceLine y={memo.entryPrice} stroke={P.green} strokeDasharray="5 3" label={{ value: `Entry \u20B9${memo.entryPrice}`, position: "right", fontSize: 10, fill: P.green, fontFamily: P.mono }} />}
+                <Area type="monotone" dataKey="price" stroke={P.acc} strokeWidth={2.5} fill="url(#priceGrad)" dot={{ r: 3, fill: P.acc, stroke: "#fff", strokeWidth: 2 }} activeDot={{ r: 5 }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </Card>
+        );
+      })()}
 
       {/* ── Investment Thesis ── */}
       <Card style={{ padding: "24px", marginBottom: 14 }} h={false}>
@@ -805,13 +951,13 @@ export default function MemoSA({ stocks, sectors, peers, memos }) {
     <div style={{ background: P.bg, minHeight: "100vh", color: P.text, fontFamily: P.f }}>
       <RechartsComponents />
       <TickerBar />
-      <Nav view={view} setView={setView} wc={stars.size} />
+      <Nav view={view} setView={setView} />
 
       {view === "home" && <HomeView stocks={enrichedStocks} sectors={sectors} setView={setView} setMemo={setMemoTicker} setSec={setSec} />}
       {view === "memos" && <MemosView stocks={enrichedStocks} setView={setView} setMemo={setMemoTicker} stars={stars} tog={tog} />}
       {view === "memo" && <MemoDetailView memo={currentMemo} peers={peers} setView={setView} stars={stars} tog={tog} />}
-      {view === "compare" && <div style={{ padding: "60px 28px", textAlign: "center", color: P.t3 }}>Compare view — use the v7 artifact component</div>}
-      {view === "watchlist" && <div style={{ padding: "60px 28px", textAlign: "center", color: P.t3 }}>Watchlist view — use the v7 artifact component</div>}
+      {view === "compare" && <CompareView stocks={enrichedStocks} />}
+
       {view === "about" && <AboutView />}
 
       <div style={{ borderTop: `1px solid ${P.border}`, padding: "18px 28px", marginTop: 48, display: "flex", justifyContent: "space-between" }}>
